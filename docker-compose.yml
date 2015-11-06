@@ -44,17 +44,17 @@ cassandra:
         - "9160:9160"
         - "7000:7000"
     volumes:
-        - ../.data/cassandra/data:/var/lib/cassandra
+        - ../.data/cassandra:/var/lib/cassandra
 
 # ### Elasticsearch
 #
 # Used to index mail content and ensure great research performances.
 elasticsearch:
-    image: elasticsearch
+    image: elasticsearch:1
     ports:
         - "9200:9200"
     volumes:
-        - ../.data/elasticsearch/data:/data/data
+        - ../.data/elasticsearch/data:/usr/share/elasticsearch/data
 
 # Commands
 # --------
