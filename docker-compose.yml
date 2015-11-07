@@ -1,22 +1,14 @@
 # Note that all path are relative to fig file
-#web:
-#    build: ../web
-#    volumes:
-#        - ../web:/usr/src/web
-#        - ../config:/usr/lib/python/config
-#        - ../core:/usr/lib/python/core
-#        - ../messaging:/usr/lib/python/messaging
-#        - ../smtp:/usr/lib/python/smtp
-#        - ../storage:/usr/lib/python/storage
-#        - ../api:/usr/lib/python/api
-#        - ../cli:/usr/lib/python/cli
-#    links:
-#        - redis
-#        - rabbitmq
-#        - cassandra
-#        - elasticsearch
-#    cmd: []
-#    entrypoint: []
+api:
+    build: ../api
+    volumes:
+        - ../api:/srv/caliopen/api
+    links:
+        - redis:redis.dev.caliopen.org
+        - cassandra:cassandra.dev.caliopen.org
+        - elasticsearch:es.dev.caliopen.org
+    ports:
+        - "6543:6543"
 
 # ### Redis Database
 #
@@ -83,9 +75,9 @@ elasticsearch:
 cassandracli:
     image: cassandra
     links:
-        - cassandra:cassandra.caliopen.dev
+        - cassandra:cassandra.dev.caliopen.org
     entrypoint: 'cqlsh'
-    command: ['cassandra.caliopen.dev']
+    command: ['cassandra.dev.caliopen.org']
 
 # ### Npm container
 #

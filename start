@@ -20,23 +20,15 @@ cd "${CALIOPEN_DIR}"
 [[ -d "${CALIOPEN_DIR}/.data/cassandra/data" ]] || mkdir -p "${CALIOPEN_DIR}/.data/cassandra/data"
 [[ -d "${CALIOPEN_DIR}/.data/elasticsearch/data" ]] || mkdir -p "${CALIOPEN_DIR}/.data/elasticsearch/data"
 
-
-echo "Start containers"
 # A fixed Current Working Directory is required to ensure
 # data directories are always the same.
 cd "${DEV_DIR}"
-$COMPOSE_CMD up -d redis cassandra elasticsearch rabbitmq
 
+echo "Stop existing containers"
+$COMPOSE_CMD kill
 
-echo "Have to wait for cassandra to be up"
-sleep 15
+echo "Start containers"
+$COMPOSE_CMD up -d redis cassandra elasticsearch api
 
-echo "Start HTTP APIs"
-pserve --reload ${API_DIR}/development.ini.sample &
-
-echo "Start server"
-
+echo "Start web server"
 DEBUG=caliopen.web:* NODE_ENV=development nodemon ${WEB_DIR}/bin/start --watch ${WEB_DIR}/app
-
-echo "stop containers"
-$COMPOSE_CMD stop
