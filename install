@@ -83,29 +83,6 @@ cd "${CALIOPEN_DIR}"
 [[ -d "${CALIOPEN_DIR}/.data/cassandra/data" ]] || mkdir -p "${CALIOPEN_DIR}/.data/cassandra/data"
 [[ -d "${CALIOPEN_DIR}/.data/elasticsearch/data" ]] || mkdir -p "${CALIOPEN_DIR}/.data/elasticsearch/data"
 
-# Install frontend
-# ================
-cd "${CALIOPEN_DIR}/frontend"
-
-# Use docker-compose to launch npm if no local npm is found
-command -v npm >/dev/null 2>&1 || supercharge_npm=1
-if [[ ! -z "$supercharge_npm" ]]
-then
-    function node {
-        $COMPOSE_CMD run node $@
-    }
-    function npm {
-        $COMPOSE_CMD run npm $@
-    }
-    function ember {
-        $COMPOSE_CMD run ember $@
-    }
-fi
-
-source ./bin/install
-declare ret="$?"
-[[ "0" -eq "$ret" ]] || exit $ret
-
 
 # Install web
 # ================

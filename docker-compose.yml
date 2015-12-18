@@ -79,29 +79,6 @@ cassandracli:
     entrypoint: 'cqlsh'
     command: ['cassandra.dev.caliopen.org']
 
-# ### Npm container
-#
-# Run npm  in a docker container.
-# Simply run `fig run npm install` to install dependencies
-# Simply run `fig run npm run dev` to run in dev mode
-npm:
-    image: "node:0.10"
-    working_dir: /usr/local/caliopen/frontend
-    volumes:
-        - ../:/usr/local/caliopen
-    entrypoint: npm
-
-
-# ### Node environment
-#
-# Run node commands, Note there is no entry point.
-# Simply run `fig run node my/js/file.js`
-node:
-    image: "node:0.10"
-    working_dir: /usr/local/caliopen/frontend
-    volumes:
-        - ../:/usr/local/caliopen
-
 web:
   build: ../web
   volumes:
