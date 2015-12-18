@@ -91,13 +91,6 @@ npm:
         - ../:/usr/local/caliopen
     entrypoint: npm
 
-# ### Grunt container
-ember:
-    image: "node:0.10"
-    working_dir: /usr/local/caliopen/frontend
-    volumes:
-        - ../:/usr/local/caliopen
-    entrypoint: ./node_modules/.bin/ember
 
 # ### Node environment
 #
@@ -109,3 +102,16 @@ node:
     volumes:
         - ../:/usr/local/caliopen
 
+web:
+  build: ../web
+  volumes:
+    - ../web:/srv/caliopen/web
+  volumes_from:
+    - web-client-ng
+  ports:
+    - "80:4000"
+
+web-client-ng:
+  build: ../web-client-ng
+  volumes:
+    - ../web-client-ng/dist/:/srv/caliopen/web-client-ng

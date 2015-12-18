@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Stop Caliopen service
+# Refer to README file for further information
+
+DEV_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+COMPOSE_CMD="docker-compose"
+
+# A fixed Current Working Directory is required to ensure
+# data directories are always the same.
+cd "${DEV_DIR}"
+
+echo "Stop containers"
+$COMPOSE_CMD stop

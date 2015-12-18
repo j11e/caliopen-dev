@@ -28,7 +28,4 @@ echo "Stop existing containers"
 $COMPOSE_CMD kill
 
 echo "Start containers"
-$COMPOSE_CMD up -d redis cassandra elasticsearch api
-
-echo "Start web server"
-DEBUG=caliopen.web:* NODE_ENV=development nodemon ${WEB_DIR}/bin/start --watch ${WEB_DIR}/app
+$COMPOSE_CMD up -d redis cassandra elasticsearch api web
