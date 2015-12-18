@@ -86,7 +86,7 @@ web:
   volumes_from:
     - web-client-ng
   ports:
-    - "80:4000"
+    - "4000:4000"
 
 web-client-ng:
   build: ../web-client-ng
