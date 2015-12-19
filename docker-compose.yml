@@ -81,6 +81,8 @@ cassandracli:
 
 web:
   build: ../web
+  links:
+    - api:api.dev.caliopen.org
   volumes:
     - ../web:/srv/caliopen/web
   volumes_from:
