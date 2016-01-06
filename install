@@ -107,5 +107,7 @@ source ./bin/install
 declare ret="$?"
 [[ "0" -eq "$ret" ]] || exit $ret
 
+$COMPOSE_CMD run web-client-ng
+
 # And we're done
 echo "DONE"

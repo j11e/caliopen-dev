@@ -1,0 +1,40 @@
+# Note that all path are relative to fig file
+# POC config file for alpha deployements
+
+api:
+    build: ../api
+    links:
+        - redis:redis.dev.caliopen.org
+        - cassandra:cassandra.dev.caliopen.org
+        - elasticsearch:es.dev.caliopen.org
+
+redis:
+    image: redis
+
+rabbitmq:
+    image: rabbitmq
+
+cassandra:
+    image: cassandra
+
+elasticsearch:
+    image: elasticsearch:1
+
+cassandracli:
+    image: cassandra
+    links:
+        - cassandra:cassandra.dev.caliopen.org
+    entrypoint: 'cqlsh'
+    command: ['cassandra.dev.caliopen.org']
+
+web:
+  build: ../web
+  ports:
+    - "4000:4000"
+  links:
+    - api:api.dev.caliopen.org
+  volumes_from:
+    - web-client-ng
+
+web-client-ng:
+  build: ../web-client-ng

@@ -79,18 +79,27 @@ cassandracli:
     entrypoint: 'cqlsh'
     command: ['cassandra.dev.caliopen.org']
 
+# ### CaliOpen Cli
+#
+# serve static files, manage authentication and api proxy
 web:
   build: ../web
+  ports:
+    - "4000:4000"
   links:
     - api:api.dev.caliopen.org
   volumes:
     - ../web:/srv/caliopen/web
   volumes_from:
     - web-client-ng
-  ports:
-    - "4000:4000"
+  command: "run start:watch"
 
+# Commands for dev
+# * docker-compose run web-client-ng bin/start : (default) build
+# * docker-compose run web-client-ng bin/watch : build and watch files
 web-client-ng:
   build: ../web-client-ng
   volumes:
-    - ../web-client-ng/dist/:/srv/caliopen/web-client-ng
+    - ../web-client-ng:/usr/share/caliopen/web-client-ng
+  working_dir: /usr/share/caliopen/web-client-ng
+  command: ["bin/watch"]
