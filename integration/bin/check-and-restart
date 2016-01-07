@@ -1,0 +1,145 @@
+#!/bin/bash
+#
+# Check availability of a newer version for gandi-v5/admin and replace current
+# one with latest version from source control.
+# This script is intended to run as a cron job.
+#
+# Typical usage:
+#
+# ./integration/bin/check-and-restart > /dev/null 2> >(logger -t SERVICE)
+
+set -o nounset
+set -o errexit
+export LANG=C LC_ALL=C LC_MESSAGES=C
+
+PATH="/bin:/usr/sbin:/usr/bin"
+USER_="integ"
+SU="/bin/su $USER_ -c"
+
+procname=$(basename "$0")
+lockfile=/var/run/${procname/.sh/}.lock
+opwd=`pwd`
+
+# Repository declaration
+INSTALL_DIR=/opt/caliopen
+BIN_DIR=/opt/caliopen/bin
+SERVICE=caliopen
+#FIXME before merge
+BRANCH="integration_script"
+GITHUB=https://github.com/CaliOpen/caliopen-dev.git
+LOGFILE=/var/log/${BIN_DIR/\/srv\//}.log
+
+##################################################
+# Write an error message to stderr.
+# Globals:
+#   None
+# Arguments:
+#   Message(s) to write on a single line
+# Returns:
+#   None
+##################################################
+err() {
+  echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $@" >&2
+}
+
+##################################################
+# Write a log message to stdout.
+# Globals:
+#   None
+# Arguments:
+#   Message(s) to write on a single line
+# Returns:
+#   None
+##################################################
+info() {
+  echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $@" >&1
+}
+
+##################################################
+# Update services configuration, then execute
+# build steps for integration environment, and
+# finaly restart services.
+#
+# This method is executed whenever the code
+# changed in source control.
+# Globals:
+#   INSTALL_DIR
+#   SERVICE
+#   SU
+#   CALIOPEN_COMPONENTS
+#   ARGS
+# Arguments:
+#   None
+# Returns:
+#   None
+##################################################
+function deploy {
+    # copy configuration
+    cp "$BIN_DIR/integration/nginx/sites-available/web" "/etc/nginx/sites-available/caliopen.web"
+    cp "$BIN_DIR/integration/bin/check-and-restart" /root/check-and-restart-caliopen.staging && \
+        chmod +x /root/check-and-restart-caliopen.staging
+
+    echo "DONE: components have been cloned"
+    # We probably need
+    # to rebuild images
+    # to drop data
+    # rm -rf ${INSTALL_DIR}/.data
+    $SU "(cd ${BIN_DIR} && ENV=staging ./start)"
+    # to reload fixtures
+
+    info "Restart $SERVICE"
+    service nginx restart
+}
+
+# --- main ---
+# Check lock file
+if [ -e $lockfile ]; then
+    err "Sorry, $0 is already running."
+    exit
+fi
+# Create lock file
+trap "rm -f $lockfile; exit" INT TERM EXIT
+touch "$lockfile"
+
+# --- repository and service management
+cd /home/$USER_
+
+if [ ! -d "${BIN_DIR}" ]
+then
+    info "Install repositories in ${BIN_DIR}"
+    mkdir -p ${INSTALL_DIR}
+    chown -R ${USER_}:${USER_} ${INSTALL_DIR}
+    $SU "git clone ${GITHUB} ${BIN_DIR} --branch=${BRANCH}"
+    $SU "${BIN_DIR}/install"
+    deploy
+    $SU "${BIN_DIR}/load-fixtures"
+else
+    info "Check for updates"
+    set +o nounset
+    source ${BIN_DIR}/common.sh
+    set -o nounset
+    HAS_UPDATE=false
+    for c in bin $CALIOPEN_COMPONENTS
+    do
+        $SU "cd $CALIOPEN_DIR/$c ; git fetch origin"
+        # Check if remote is ahead
+        if [ $(cd $CALIOPEN_DIR/$c; git rev-list HEAD...origin/master --count) -ne 0 ]
+        then
+            info "An update has been found in $c"
+            HAS_UPDATE=true
+        fi
+    done
+    if [ $HAS_UPDATE ]
+    then
+        $SU "${BIN_DIR}/stop"
+        $SU "${BIN_DIR}/update"
+        deploy
+    else
+        info "Nothing changed"
+    fi
+fi
+
+rm -f "$lockfile"
+trap - INT TERM EXIT
+
+exit 0

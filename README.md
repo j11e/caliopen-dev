@@ -36,22 +36,16 @@ git clone https://github.com/CaliOpen/caliopen-dev.git bin
 To customize the toolbelt behavior, you can copy `caliopen.env.tmpl` to
 `caliopen.env` and change its values to reflect your setup.
 
-Note that following dependencies are required:
-
-> * python
-> * python-dev
-> * virtualenv
-> * libffi-dev
-> * docker
-
-If you use debian, just run
-`aptitude install python python-dev python-virtualenv libffi-dev`
+Note that docker and docker-compose are required. There are installation instructions for [mac][1] and [linux][2] (you may have a chance to make it works in windows) and then [docker-compose][3].
 
 ## Start Service
 
 Starting the service is as easy as running `./bin/start`.
 
-Access CaliOpen with your browser at [http://localhost:6543](http://localhost:6543)
+Access CaliOpen with your browser at [http://localhost:4000](http://localhost:4000)
+
+> You also have a command a command to stop caliopen, `./bin/stop`.  
+> And an other to see logs: `(cd bin && docker-compose logs)`
 
 ## Contributing
 
@@ -113,3 +107,58 @@ Some mails from the CaliOpen Development mailing list are inserted too.
 
 > Feel free to add more fixtures, but be aware that any information in
 > the contributed fixtures are public
+
+### Troubleshoutings
+
+
+**building web-client-ng**
+
+During setup this error may occurs:
+
+```
+/usr/share/caliopen/web-client-ng/node_modules/gulp-sass/node_modules/node-sass/lib/extensions.js:158
+    throw new Error([
+    ^
+
+Error: The `libsass` binding was not found in /usr/share/caliopen/web-client-ng/node_modules/gulp-sass/node_modules/node-sass/vendor/linux-x64-46/binding.node
+This usually happens because your node version has changed.
+```
+
+> Let finish install then retry build:
+
+```
+bin/stop
+(cd bin && docker-compose build web-client-ng)
+bin/start
+```
+
+**building cli**
+
+When loading fixtures this kind of error may occurs
+
+```
+Successfully built 529b623209ac
+Traceback (most recent call last):
+  File "/usr/local/bin/caliopen", line 5, in <module>
+    from pkg_resources import load_entry_point
+  File "/usr/lib/python2.7/dist-packages/pkg_resources.py", line 2876, in <module>
+    working_set = WorkingSet._build_master()
+  File "/usr/lib/python2.7/dist-packages/pkg_resources.py", line 449, in _build_master
+    ws.require(__requires__)
+  File "/usr/lib/python2.7/dist-packages/pkg_resources.py", line 745, in require
+    needed = self.resolve(parse_requirements(requirements))
+  File "/usr/lib/python2.7/dist-packages/pkg_resources.py", line 639, in resolve
+    raise DistributionNotFound(req)
+pkg_resources.DistributionNotFound: caliopen.cli==0.0.1
+```
+
+> For some reasons the built is not correctly done, then you can fix it with:
+
+```
+(cd bin && docker-compose run cli python setup.py develop)
+bin/load-fixtures
+```
+
+[1]: https://docs.docker.com/mac/
+[2]: https://docs.docker.com/linux/step_one/
+[3]: https://docs.docker.com/compose/install/

@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 DEV_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${DEV_DIR}/common.sh"
+COMPOSE_CMD="docker-compose"
+CALIOPEN_BASE_DIR=/usr/share/caliopen/base
+CALIOPEN_DEV_DIR=/usr/share/caliopen/bin
 
-[ -z "$VIRTUAL_ENV" ] && source "$CALIOPEN_DIR/venv/bin/activate"
-
-caliopen -f ${CALIOPEN_DIR}/base/caliopen.yaml.template setup
-caliopen -f ${CALIOPEN_DIR}/base/caliopen.yaml.template create_user -e julien.muetton@gandi.net -g Julien -f Muetton -p 123456
-caliopen -f ${CALIOPEN_DIR}/base/caliopen.yaml.template import -e julien.muetton@gandi.net -f mbox -p "${CALIOPEN_DIR}/bin/fixtures/julien.muetton@gandi.net/mbox/"
+cd $DEV_DIR
+docker-compose run cli caliopen -f ${CALIOPEN_BASE_DIR}/caliopen.yaml.template setup
+docker-compose run cli caliopen -f ${CALIOPEN_BASE_DIR}/caliopen.yaml.template create_user -e julien.muetton@gandi.net -g Julien -f Muetton -p 123456
+docker-compose run cli caliopen -f ${CALIOPEN_BASE_DIR}/caliopen.yaml.template import -e julien.muetton@gandi.net -f mbox -p "${CALIOPEN_DEV_DIR}/fixtures/julien.muetton@gandi.net/mbox/"
