@@ -2,6 +2,10 @@
 # Start Caliopen service for development purpose.
 # Refer to README file for further information
 
+[[ -z $ENV ]] && COMPOSE_FILE="docker-compose.yml" && echo "Start dev environment"
+[[ $ENV == "staging" ]] && COMPOSE_FILE="docker-compose-staging.yml" && echo "Start staging environment"
+
+
 DEV_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source "${DEV_DIR}/common.sh"
@@ -28,4 +32,4 @@ echo "Stop existing containers"
 $COMPOSE_CMD kill
 
 echo "Start containers"
-$COMPOSE_CMD up -d redis cassandra elasticsearch api web
+$COMPOSE_CMD -f $COMPOSE_FILE up -d redis cassandra elasticsearch api web-client-ng web
