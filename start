@@ -14,9 +14,6 @@ WEB_DIR="${CALIOPEN_DIR}/web"
 API_DIR="${CALIOPEN_DIR}/api"
 VENV_DIR="${CALIOPEN_DIR}/venv"
 
-echo "Activate virtualenv"
-source "${CALIOPEN_DIR}/venv/bin/activate"
-
 COMPOSE_CMD="docker-compose"
 
 # Create data folders

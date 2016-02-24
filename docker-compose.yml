@@ -61,11 +61,17 @@ elasticsearch:
 # * `fig run cli setup`
 # * `fig run cli create_user -e julien.muetton@gandi.net -g Julien -f Muetton -p 123456`
 # * `fig run cli import -e julien.muetton@gandi.net -f mbox -p ~/Downloads/mails/`
-#cli:
-#    build: .
-#    volumes-from: web
-#    cmd: ['-f', 'caliopen.yaml.template']
-#    entrypoint: ['caliopen']
+cli:
+    build: ../cli
+    links:
+        - redis:redis.dev.caliopen.org
+        - cassandra:cassandra.dev.caliopen.org
+        - elasticsearch:es.dev.caliopen.org
+    volumes:
+      - ../cli:/srv/caliopen/cli
+      - ./:/usr/share/caliopen/bin
+      - ../base/:/usr/share/caliopen/base
+    command: ['caliopen']
 
 # ### Cassandra Cli
 #
@@ -101,5 +107,4 @@ web-client-ng:
   build: ../web-client-ng
   volumes:
     - ../web-client-ng:/usr/share/caliopen/web-client-ng
-  working_dir: /usr/share/caliopen/web-client-ng
-  command: ["bin/watch"]
+  command: ['bin/watch']

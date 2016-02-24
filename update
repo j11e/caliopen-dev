@@ -7,6 +7,7 @@ DEV_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${DEV_DIR}/common.sh"
 
 CURRDIR="$(pwd)"
+COMPOSE_CMD="docker-compose"
 
 
 for c in bin ${CALIOPEN_COMPONENTS}
@@ -39,5 +40,8 @@ do
 
     echo ""
 done
+
+
+(cd ${DEV_DIR} && ${COMPOSE_CMD} build api web web-client-ng)
 
 cd ${CURRDIR}

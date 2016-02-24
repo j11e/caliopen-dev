@@ -1,0 +1,163 @@
+#!/bin/bash
+#
+# Integration server is constantly updated with latest version from source
+# control.
+
+set -o xtrace
+set -o nounset
+set -o errexit
+export LANG=C LC_ALL=C LC_MESSAGES=C
+
+SERVICE_USER="integ"
+CRON_USER="root"
+BRANCH="master"
+GITHUB_BASE_URL="https://raw.githubusercontent.com/CaliOpen/caliopen-dev/$BRANCH"
+SERVICE_NAME=caliopen.staging
+
+SU="su ${SERVICE_USER} -c"
+
+
+##################################################
+# Add cron job if not already available.
+# Globals:
+#   None
+# Arguments:
+#   CRONINTERVAL  a cron execution pattern "*/5 * * * *"
+#   CRONJOB       the cron command to execute
+# Returns:
+#   None
+##################################################
+ensure_cronjob_exists() {
+  CRONINTERVAL="$1"
+  CRONJOB="$2"
+  if [[ -z "$CRONJOB" ]] ; then
+    echo "You must provide a cron interval and job argument" >&2;
+    exit 1;
+  fi
+
+  current_cron=$(crontab -l | grep -v "${CRONJOB}")
+  echo -e "${current_cron}\n${CRONINTERVAL} ${CRONJOB}" \
+    | crontab -u "${CRON_USER}" -
+}
+
+
+##################################################
+# Install required packages for the integration
+# environment.
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   None
+##################################################
+function install_base {
+  apt-get update \
+    && apt-get upgrade -yf \
+    && apt-get install -yf \
+          cron \
+          ca-certificates \
+          git \
+          wget \
+          nginx \
+          tmux \
+          htop \
+          vim \
+          curl \
+          apt-transport-https
+}
+
+##################################################
+# Install docker
+# Arguments:
+#   None
+# Returns:
+#   None
+##################################################
+function install_docker {
+  apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D \
+    && echo "deb https://apt.dockerproject.org/repo debian-jessie main" > /etc/apt/sources.list.d/docker.list \
+    && apt-get update \
+    && apt-get install -yf docker-engine \
+    && service docker start \
+    && curl -L https://github.com/docker/compose/releases/download/1.5.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose \
+    && chmod +x /usr/local/bin/docker-compose
+}
+
+##################################################
+# Create user and destination folder
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   None
+##################################################
+create_integ_user() {
+  local USER_EXISTS=$(grep "${SERVICE_USER}" /etc/passwd| wc -l)
+  [[ "$USER_EXISTS" -ne "0" ]] || useradd -r -m "${SERVICE_USER}"
+  [[ -d /srv ]] || mkdir /srv
+  chown "${SERVICE_USER}:${SERVICE_USER}" /srv
+  groupadd docker
+  gpasswd -a ${SERVICE_USER} docker
+}
+
+##################################################
+# Add check-and-restart to crontab
+# Every 5 minutes, the repository will be fectched, scripts updated and
+# services restarted
+# Globals:
+#   GITHUB_BASE_URL
+# Arguments:
+#   None
+# Returns:
+#   None
+##################################################
+configure_cronjob() {
+  wget "${GITHUB_BASE_URL}/integration/bin/check-and-restart" \
+      -O /root/check-and-restart \
+    && chmod +x /root/check-and-restart \
+    && ensure_cronjob_exists "*/30 * * * *" "/root/check-and-restart 2>&1 >/dev/null | logger -t $SERVICE_NAME"
+}
+
+##################################################
+# Add site to nginx
+# Globals:
+#   GITHUB_BASE_URL
+# Arguments:
+#   None
+# Returns:
+#   None
+##################################################
+configure_nginx() {
+  wget "${GITHUB_BASE_URL}/integration/nginx/sites-available/web" -O /etc/nginx/sites-available/caliopen.web
+  [[ ! -e /etc/nginx/sites-enabled/default ]] || rm /etc/nginx/sites-enabled/default
+  ln -fs /etc/nginx/sites-available/caliopen.web /etc/nginx/sites-enabled/caliopen.web
+}
+
+##################################################
+# Set up ssh for GITHUB usage.
+# Globals:
+#   DEPLOY_KEY
+#   SU
+# Arguments:
+#   None
+# Returns:
+#   None
+##################################################
+setup_ssh() {
+  $SU "mkdir ~/.ssh"
+  $SU "ssh-keyscan github.com >> ~/.ssh/known_hosts"
+  # this would be the perfect place to write an integration ssh-key
+  # [[ -z  "${DEPLOY_KEY}" ]] || echo "${DEPLOY_KEY}" > /home/integ/.ssh/id_rsa
+}
+
+
+#-- Main --
+install_base \
+  && install_docker \
+  && create_integ_user  \
+  && configure_cronjob \
+  && configure_nginx \
+  && setup_ssh \
+  && /root/check-and-restart
