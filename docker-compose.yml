@@ -96,9 +96,10 @@ web:
     - api:api.dev.caliopen.org
   volumes:
     - ../web:/srv/caliopen/web
+    - ../web-client-ng/dist/:/srv/caliopen/web-client-ng
   volumes_from:
     - web-client-ng
-  command: "run start:watch"
+  command: ['bin/watch']
 
 # Commands for dev
 # * docker-compose run web-client-ng bin/start : (default) build
