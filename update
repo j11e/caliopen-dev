@@ -42,7 +42,7 @@ do
 done
 
 
-(cd ${DEV_DIR} && ${COMPOSE_CMD} build api web web-client-ng)
+(cd ${DEV_DIR} && ${COMPOSE_CMD} build api web web-client-ng cli)
 
 cd ${CURRDIR}
 
