@@ -45,3 +45,7 @@ done
 (cd ${DEV_DIR} && ${COMPOSE_CMD} build api web web-client-ng)
 
 cd ${CURRDIR}
+
+# Update storage engines models
+CALIOPEN_BASE_DIR=/usr/share/caliopen/base
+${COMPOSE_CMD} run cli caliopen -f ${CALIOPEN_BASE_DIR}/caliopen.yaml.template setup
