@@ -3,12 +3,19 @@ api:
     build: ../api
     volumes:
         - ../api:/srv/caliopen/api
+        - ../base:/srv/caliopen/src/caliopen.base
+        - ../base.user:/srv/caliopen/src/caliopen.base.user
+        - ../base.message:/srv/caliopen/src/caliopen.base.message
+        - ../api.base:/srv/caliopen/src/caliopen.api.base
+        - ../api.user:/srv/caliopen/src/caliopen.api.user
+        - ../api.message:/srv/caliopen/src/caliopen.api.message
     links:
         - redis:redis.dev.caliopen.org
         - cassandra:cassandra.dev.caliopen.org
         - elasticsearch:es.dev.caliopen.org
     ports:
         - "6543:6543"
+    command: ['pserve', '--reload', 'development.ini']
 
 # ### Redis Database
 #
