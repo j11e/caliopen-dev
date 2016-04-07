@@ -2,7 +2,7 @@
 
 DEV_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 COMPOSE_CMD="docker-compose"
-CALIOPEN_BASE_DIR=/usr/share/caliopen/base
+CALIOPEN_BASE_DIR=/srv/caliopen/src/caliopen.base
 CALIOPEN_DEV_DIR=/usr/share/caliopen/bin
 
 cd $DEV_DIR
