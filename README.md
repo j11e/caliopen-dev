@@ -132,33 +132,6 @@ bin/stop
 bin/start
 ```
 
-**building cli**
-
-When loading fixtures this kind of error may occurs
-
-```
-Successfully built 529b623209ac
-Traceback (most recent call last):
-  File "/usr/local/bin/caliopen", line 5, in <module>
-    from pkg_resources import load_entry_point
-  File "/usr/lib/python2.7/dist-packages/pkg_resources.py", line 2876, in <module>
-    working_set = WorkingSet._build_master()
-  File "/usr/lib/python2.7/dist-packages/pkg_resources.py", line 449, in _build_master
-    ws.require(__requires__)
-  File "/usr/lib/python2.7/dist-packages/pkg_resources.py", line 745, in require
-    needed = self.resolve(parse_requirements(requirements))
-  File "/usr/lib/python2.7/dist-packages/pkg_resources.py", line 639, in resolve
-    raise DistributionNotFound(req)
-pkg_resources.DistributionNotFound: caliopen.cli==0.0.1
-```
-
-> For some reasons the built is not correctly done, then you can fix it with:
-
-```
-(cd bin && docker-compose run cli python setup.py develop)
-bin/load-fixtures
-```
-
 [1]: https://docs.docker.com/mac/
 [2]: https://docs.docker.com/linux/step_one/
 [3]: https://docs.docker.com/compose/install/

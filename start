@@ -2,7 +2,22 @@
 # Start Caliopen service for development purpose.
 # Refer to README file for further information
 
-[[ -z $ENV ]] && COMPOSE_FILE="docker-compose.yml" && echo "Start dev environment"
+usage() {
+  cat <<USAGE
+Start caliopen containers
+
+  eg. ENV=staging ./start
+
+  this command support the following environments:
+  - dev       (default) every caliopen repositories are mounted and watched so easy to hack
+  - staging   every containers are started on the current host (no scalability)
+USAGE
+  exit 1
+}
+
+[[ -z $ENV ]] && ENV="dev"
+
+[[ $ENV == "dev" ]] && COMPOSE_FILE="docker-compose.yml" && echo "Start dev environment"
 [[ $ENV == "staging" ]] && COMPOSE_FILE="docker-compose-staging.yml" && echo "Start staging environment"
 
 
@@ -15,6 +30,29 @@ API_DIR="${CALIOPEN_DIR}/api"
 VENV_DIR="${CALIOPEN_DIR}/venv"
 
 COMPOSE_CMD="docker-compose"
+
+##################################################
+# Setup python package for development purpose in container
+# Globals:
+#   BASE_DEV_PACKAGE_DIR
+#   DEV_PACKAGE_PREFIX
+# Arguments:
+#   target container
+#   list of mounted packages
+# Returns:
+#   None
+##################################################
+BASE_DEV_PACKAGE_DIR="/srv/caliopen/src/"
+DEV_PACKAGE_PREFIX="caliopen."
+
+setupDevelop() {
+  for PACKAGE in $2; do
+    $COMPOSE_CMD run $1 /bin/bash -c "(cd $BASE_DEV_PACKAGE_DIR$DEV_PACKAGE_PREFIX$PACKAGE/ && python setup.py develop)"
+  done
+
+  $COMPOSE_CMD run $1 python setup.py develop
+}
+##################################################
 
 # Create data folders
 cd "${CALIOPEN_DIR}"
@@ -30,3 +68,6 @@ $COMPOSE_CMD kill
 
 echo "Start containers"
 $COMPOSE_CMD -f $COMPOSE_FILE up -d redis cassandra elasticsearch api web-client-ng web
+
+[[ $ENV == "dev" ]] && echo "setup api for dev" && setupDevelop "api" "base base.user base.message api.base api.user api.message"
+[[ $ENV == "dev" ]] && echo "setup cli for dev" && setupDevelop "cli" "messaging base base.user base.message smtp"
