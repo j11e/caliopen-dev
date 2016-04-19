@@ -77,7 +77,11 @@ cli:
     volumes:
       - ../cli:/srv/caliopen/cli
       - ./:/usr/share/caliopen/bin
-      - ../base/:/usr/share/caliopen/base
+      - ../base:/srv/caliopen/src/caliopen.base
+      - ../base.user:/srv/caliopen/src/caliopen.base.user
+      - ../base.message:/srv/caliopen/src/caliopen.base.message
+      - ../messaging:/srv/caliopen/src/caliopen.messaging
+      - ../smtp:/srv/caliopen/src/caliopen.smtp
     command: ['caliopen']
 
 # ### Cassandra Cli
