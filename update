@@ -21,7 +21,7 @@ do
 
     # get current branch and state
     declare BRANCH=$(git rev-parse --abbrev-ref HEAD)
-    declare DIRTY=$(git status --porcelain | wc -l)
+    declare DIRTY=$(git status --porcelain -uno | wc -l)
 
     # stash if index is dirty
     [[ "0" = "${DIRTY}" ]] || git stash
