@@ -8,6 +8,16 @@ api:
         - cassandra:cassandra.dev.caliopen.org
         - elasticsearch:es.dev.caliopen.org
 
+smtp:
+    build: ../smtp
+    ports:
+        - "25:25"
+        - "465:465"
+    environment:
+        - CALIOPEN_VIRTUAL_MAILBOX_DOMAINS=mail.caliopen.me
+    volumes:
+        - ../.data/smtp/data:/var/spool/mail
+
 redis:
     image: redis
 

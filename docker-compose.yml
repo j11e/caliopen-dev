@@ -55,6 +55,25 @@ elasticsearch:
     volumes:
         - ../.data/elasticsearch/data:/usr/share/elasticsearch/data
 
+# ### SMTP
+#
+# Launch lmtp server to deliver message to a caliopen instance
+smtp:
+    build: ../smtp
+    ports:
+        - "25:25"
+        - "465:465"
+        - "4444:4000"
+    environment:
+        - CALIOPEN_VIRTUAL_MAILBOX_DOMAINS=caliopen.local
+    volumes:
+        - ../.data/smtp/data:/var/spool/postfix
+        - ../smtp:/srv/caliopen/smtp
+        - ../base:/srv/caliopen/src/caliopen.base
+        - ../base.user:/srv/caliopen/src/caliopen.base.user
+        - ../base.message:/srv/caliopen/src/caliopen.base.message
+        - ../messaging:/srv/caliopen/src/caliopen.messaging
+
 # Commands
 # --------
 #
