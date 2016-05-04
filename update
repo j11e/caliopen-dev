@@ -42,10 +42,10 @@ do
 done
 
 
-(cd ${DEV_DIR} && ${COMPOSE_CMD} build api web web-client-ng cli)
+(cd ${DEV_DIR} && ${COMPOSE_CMD} build api web web-client-ng cli smtp)
 
 cd ${CURRDIR}
 
 # Update storage engines models
-CALIOPEN_BASE_DIR=/srv/caliopen/src/caliopen.base
-${COMPOSE_CMD} run cli caliopen -f ${CALIOPEN_BASE_DIR}/caliopen.yaml.template setup
+CALIOPEN_CONFIG_PATH=/caliopen.yaml
+${COMPOSE_CMD} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} setup
