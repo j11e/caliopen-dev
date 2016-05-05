@@ -66,6 +66,9 @@ smtp:
         - "4444:4000"
     environment:
         - CALIOPEN_VIRTUAL_MAILBOX_DOMAINS=caliopen.local
+    links:
+        - cassandra:cassandra.dev.caliopen.org
+        - elasticsearch:es.dev.caliopen.org
     volumes:
         - ../.data/smtp/data:/var/spool/postfix
         - ../smtp:/srv/caliopen/smtp
