@@ -15,6 +15,10 @@ smtp:
         - "465:465"
     environment:
         - CALIOPEN_VIRTUAL_MAILBOX_DOMAINS=mail.caliopen.me
+        - CALIOPEN_VIRTUAL_TRANSPORT=lmtp:127.0.0.1:4000
+    links:
+        - cassandra:cassandra.dev.caliopen.org
+        - elasticsearch:es.dev.caliopen.org
     volumes:
         - ../.data/smtp/data:/var/spool/mail
 
