@@ -66,6 +66,7 @@ smtp:
         - "4444:4000"
     environment:
         - CALIOPEN_VIRTUAL_MAILBOX_DOMAINS=caliopen.local
+        - CALIOPEN_VIRTUAL_TRANSPORT=lmtp:127.0.0.1:4000
     links:
         - cassandra:cassandra.dev.caliopen.org
         - elasticsearch:es.dev.caliopen.org
