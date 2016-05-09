@@ -142,12 +142,17 @@ specific contributing rules related to the repository if any ( generally describ
 
 ## Update Code Base
 
-To update the whole codebase, just run `./bin/update`.
+Update the whole codebase and restart containers:
+
+```
+./bin/update && ./bin/start
+```
 
 Note that only `master` branch will be rebased upon server version.
 
-If you have local modifications, they will be kept, so be confident and update
-often!
+If you have local modifications, they will be kept, so be confident and update often!
+The docker images will be rebuilt using cache, only updated/modified repository would take time on this rebuild.
+Afterward this will kill and recreate the containers that have changed and make sure engine models are up-to-date .
 
 ## Reset data
 
