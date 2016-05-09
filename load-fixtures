@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
+[[ -z $ENV ]] && ENV="dev"
+
+[[ $ENV == "dev" ]] && COMPOSE_FILE="docker-compose.yml" && echo "Start dev environment"
+[[ $ENV == "staging" ]] && COMPOSE_FILE="docker-compose-staging.yml" && echo "Start staging environment"
+
+
 DEV_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 COMPOSE_CMD="docker-compose"
 CALIOPEN_CONFIG_PATH=/caliopen.yaml
 CALIOPEN_DEV_DIR=/usr/share/caliopen/bin
 
 cd $DEV_DIR
-docker-compose run cli caliopen -f ${CALIOPEN_CONFIG_PATH} setup
-docker-compose run cli caliopen -f ${CALIOPEN_CONFIG_PATH} create_user -e john@mail.caliopen.me -g John -f Dœuf -p 123456
-docker-compose run cli caliopen -f ${CALIOPEN_CONFIG_PATH} import -e john@mail.caliopen.me -f mbox -p "${CALIOPEN_DEV_DIR}/fixtures/john@mail.caliopen.me/mbox/"
+docker-compose -f ${COMPOSE_FILE} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} setup
+docker-compose -f ${COMPOSE_FILE} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} create_user -e john@mail.caliopen.me -g John -f Dœuf -p 123456
+docker-compose -f ${COMPOSE_FILE} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} import -e john@mail.caliopen.me -f mbox -p "${CALIOPEN_DEV_DIR}/fixtures/john@mail.caliopen.me/mbox/"

@@ -72,3 +72,7 @@ $COMPOSE_CMD -f $COMPOSE_FILE up -d redis cassandra elasticsearch api web-client
 [[ $ENV == "dev" ]] && echo "setup api for dev" && setupDevelop "api" "base base.user base.message api.base api.user api.message"
 [[ $ENV == "dev" ]] && echo "setup cli for dev" && setupDevelop "cli" "messaging base base.user base.message smtp"
 [[ $ENV == "dev" ]] && echo "setup cli for dev" && setupDevelop "smtp" "messaging base base.user base.message"
+
+# Update storage engines models
+CALIOPEN_CONFIG_PATH=/caliopen.yaml
+${COMPOSE_CMD} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} setup
