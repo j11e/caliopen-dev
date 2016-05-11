@@ -13,5 +13,7 @@ CALIOPEN_DEV_DIR=/usr/share/caliopen/bin
 
 cd $DEV_DIR
 docker-compose -f ${COMPOSE_FILE} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} setup
-docker-compose -f ${COMPOSE_FILE} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} create_user -e john@mail.caliopen.me -g John -f Dœuf -p 123456
-docker-compose -f ${COMPOSE_FILE} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} import -e john@mail.caliopen.me -f mbox -p "${CALIOPEN_DEV_DIR}/fixtures/john@mail.caliopen.me/mbox/"
+docker-compose -f ${COMPOSE_FILE} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} create_user -e dev@caliopen.local -g John -f Dœuf -p 123456
+docker-compose -f ${COMPOSE_FILE} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} import -e dev@caliopen.local -f mbox -p "${CALIOPEN_DEV_DIR}/fixtures/dev@caliopen.local/mbox/"
+docker-compose -f ${COMPOSE_FILE} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} create_user -e test@caliopen.local -g John -f Doe -p 123456
+docker-compose -f ${COMPOSE_FILE} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} import -e test@caliopen.local -f mbox -p "${CALIOPEN_DEV_DIR}/fixtures/test@caliopen.local/mbox/"
