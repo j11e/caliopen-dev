@@ -34,6 +34,16 @@ cassandra:
 elasticsearch:
     image: elasticsearch:1
 
+cli:
+    build: ../cli
+    links:
+        - redis:redis.dev.caliopen.org
+        - cassandra:cassandra.dev.caliopen.org
+        - elasticsearch:es.dev.caliopen.org
+    volumes:
+      - ./:/usr/share/caliopen/bin
+    command: ['caliopen']
+
 cassandracli:
     image: cassandra
     links:
