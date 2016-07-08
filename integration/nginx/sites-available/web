@@ -4,7 +4,7 @@ upstream nodeapp {
 }
 
 server {
-    # listen        443 ssl;
+    listen        443 ssl;
     listen              [::]:443 ssl;
     server_name         poc.caliopen.org;
 
@@ -27,6 +27,7 @@ server {
 
 server {
     listen [::]:80;
+    listen 80;
     server_name poc.caliopen.org;
     rewrite     ^(.*)   https://$server_name$1 permanent;
 }
