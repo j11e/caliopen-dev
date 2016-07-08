@@ -128,6 +128,8 @@ web:
     - "4000:4000"
   links:
     - api:api.dev.caliopen.org
+  environment:
+    - CALIOPEN_ENV
   volumes:
     - ../web:/srv/caliopen/web
     - ../web-client-ng/dist/:/srv/caliopen/web-client-ng

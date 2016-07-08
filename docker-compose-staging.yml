@@ -59,6 +59,8 @@ web:
     - api:api.dev.caliopen.org
   volumes_from:
     - web-client-ng
+  environment:
+    - CALIOPEN_ENV
 
 web-client-ng:
   build: ../web-client-ng

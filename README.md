@@ -80,10 +80,10 @@ By default the `start` command run CaliOpen in development environment. The stag
 
 ```bash
 # Start or restart in staging environment
-ENV=staging ./bin/start
+CALIOPEN_ENV=staging ./bin/start
 
 # Start or restart in development environment (default)
-ENV=dev ./bin/start
+CALIOPEN_ENV=dev ./bin/start
 
 # Stop all CaliOpen running containers
 ./bin/stop

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-[[ -z $ENV ]] && ENV="dev"
+[[ -z $CALIOPEN_ENV ]] && CALIOPEN_ENV="development"
 
-[[ $ENV == "dev" ]] && COMPOSE_FILE="docker-compose.yml" && echo "Start dev environment"
-[[ $ENV == "staging" ]] && COMPOSE_FILE="docker-compose-staging.yml" && echo "Start staging environment"
+[[ $CALIOPEN_ENV == "development" ]] && COMPOSE_FILE="docker-compose.yml" && echo "Start development environment"
+[[ $CALIOPEN_ENV == "staging" ]] && COMPOSE_FILE="docker-compose-staging.yml" && echo "Start staging environment"
 
 
 DEV_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
