@@ -6,19 +6,19 @@ usage() {
   cat <<USAGE
 Start caliopen containers
 
-  eg. ENV=staging ./start
+  eg. CALIOPEN_ENV=staging ./start
 
   this command support the following environments:
-  - dev       (default) every caliopen repositories are mounted and watched so easy to hack
+  - development       (default) every caliopen repositories are mounted and watched so easy to hack
   - staging   every containers are started on the current host (no scalability)
 USAGE
   exit 1
 }
 
-[[ -z $ENV ]] && ENV="dev"
+[[ -z $CALIOPEN_ENV ]] && CALIOPEN_ENV="development"
 
-[[ $ENV == "dev" ]] && COMPOSE_FILE="docker-compose.yml" && echo "Start dev environment"
-[[ $ENV == "staging" ]] && COMPOSE_FILE="docker-compose-staging.yml" && echo "Start staging environment"
+[[ $CALIOPEN_ENV == "development" ]] && COMPOSE_FILE="docker-compose.yml" && echo "Start development environment"
+[[ $CALIOPEN_ENV == "staging" ]] && COMPOSE_FILE="docker-compose-staging.yml" && echo "Start staging environment"
 
 
 DEV_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -69,9 +69,9 @@ $COMPOSE_CMD kill
 echo "Start containers"
 $COMPOSE_CMD -f $COMPOSE_FILE up -d redis cassandra elasticsearch api web-client-ng web smtp
 
-[[ $ENV == "dev" ]] && echo "setup api for dev" && setupDevelop "api" "base base.user base.message api.base api.user api.message"
-[[ $ENV == "dev" ]] && echo "setup cli for dev" && setupDevelop "cli" "messaging base base.user base.message smtp"
-[[ $ENV == "dev" ]] && echo "setup cli for dev" && setupDevelop "smtp" "messaging base base.user base.message"
+[[ $CALIOPEN_ENV == "development" ]] && echo "setup api for dev" && setupDevelop "api" "base base.user base.message api.base api.user api.message"
+[[ $CALIOPEN_ENV == "development" ]] && echo "setup cli for dev" && setupDevelop "cli" "messaging base base.user base.message smtp"
+[[ $CALIOPEN_ENV == "development" ]] && echo "setup cli for dev" && setupDevelop "smtp" "messaging base base.user base.message"
 
 sleep 20
 

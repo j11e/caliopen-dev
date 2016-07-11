@@ -84,7 +84,7 @@ function deploy {
     # to rebuild images
     # to drop data
     # rm -rf ${INSTALL_DIR}/.data
-    $SU "(cd ${BIN_DIR} && ENV=staging ./start)"
+    $SU "(cd ${BIN_DIR} && CALIOPEN_ENV=staging ./start)"
     # to reload fixtures
 
     info "Restart $SERVICE"
