@@ -52,7 +52,8 @@ sleep 20
 The server is now up on your machine on http://localhost:4000/.
 You will be able to connect with:
 
-* username `john@mail.caliopen.me`, password `123456`.
+* username `dev@caliopen.local`, password `123456`.
+* username `test@caliopen.local`, password `123456`.
 
 _Some mails from the CaliOpen Development and emacs mailing lists and spams are inserted too._
 
