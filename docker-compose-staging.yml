@@ -32,7 +32,7 @@ cassandra:
     image: cassandra
 
 elasticsearch:
-    image: elasticsearch:1
+    image: elasticsearch
 
 cli:
     build: ../cli

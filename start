@@ -77,4 +77,4 @@ sleep 20
 
 # Update storage engines models
 CALIOPEN_CONFIG_PATH=/caliopen.yaml
-${COMPOSE_CMD} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} setup
+${COMPOSE_CMD} -f ${COMPOSE_FILE} run cli caliopen -f ${CALIOPEN_CONFIG_PATH} setup
